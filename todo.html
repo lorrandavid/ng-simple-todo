@@ -1,9 +1,42 @@
 <!DOCTYPE html>
-<html>
+<!--
+    AngularJS apps are formed from one or more modules. Modules are
+    created by calling the angular.module method, as follows:
+
+        var todoApp = angular.module("todoApp", []);
+
+    The arguments to the angular.module method are:
+
+        1. the name of the module to create and
+        2. an array of other modules that are going to be needed.Please note the
+           dependencies argument must be supplied, avoiding which causes an error.
+           If there are no dependencies then provide an empty array.
+
+    Tell AngularJS to apply the module through the ng-app attribute(in AngularJS
+    terms it is referred as a DIRECTIVE)
+
+    The most important AngularJS addition to HTML is the ng-app attribute,
+    which specifies that the html element in the listing contains a module that
+    should be processed by AngularJS.
+
+    When AngularJS is the only JavaScript framework being used, the convention
+    is to apply the ng-app attribute to the html element, as shown below.
+    If you are mixing AngularJS with other technologies such as jQuery, you
+    can narrow the boundaries of the AngularJS app by applying the ng-app
+    attribute to an element within the document.
+
+-->
+<html ng-app="todoApp">
 <head>
     <title>TODO List</title>
     <link href="../css/bootstrap.css" rel="stylesheet"/>
     <link href="../css/bootstrap-theme.css" rel="stylesheet"/>
+
+    <script src="../scripts/angular.js"></script>
+
+    <script>
+       var todoApp = angular.module("todoApp", []);
+    </script>
 </head>
 <body>
     <div class="page-header">
