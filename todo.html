@@ -27,6 +27,39 @@
 
        todoApp.controller("ToDoController", function($scope) {
           $scope.todo = model;
+
+          /*
+            Controllers define "behaviors" on the scope.
+
+            Behaviors are functions that operate on the data in the model
+            to implement the business logic in the application.
+
+            The behaviors defined by a controller support a view to display
+            data to the user and to update the model based on user interactions.
+
+            Behaviors are defined by adding functions to the $scope object
+            that is passed to the controller function.
+
+            For e.g. the behavior defined below updates the TODO list items
+            count in the header, by excluding the completed items count.
+
+            The name of the property used to attach the function to the $scope
+            object is used as the behavior name.Our behavior is called
+            "incompleteCount", and we can invoke it within the scope of the
+            "ng-controller" attribute, which applies the controller to the
+            HTML elements that form the view.
+          */
+
+          $scope.incompleteCount = function() {
+            var count = 0;
+            // Here we used angular.forEach method to enumerate the contents
+            // of the data array.AngularJS includes some useful utility methods
+            // that supplement the Javascript language.
+            angular.forEach($scope.todo.items, function(item) {
+              if (!item.done) { count++ };
+            });
+            return count;
+          };
        });
     </script>
 </head>
@@ -34,7 +67,24 @@
     <div class="page-header">
         <h1>
             {{todo.user}}'s To Do List
-            <span class="label label-default">{{todo.items.length}}</span>
+            <!--
+                Notice here that we call the behavior using parentheses.
+                You can pass objects are arguments to behaviors, which
+                makes it possible to create general-purpose behaviors
+                that can be used with different data objects.This present
+                application is sufficiently simple that it is not required
+                to pass any arguments and instead get the data we require
+                directly from the $scope object in the controller.
+
+                Also we have used "ng-hide" directive which will hide the element
+                it is applied to - and its content elements - if the expression
+                that is assigned as the attribute value evaluates to true
+                (boolean).For e.g. if all the items in the TODO list are complete
+                then displaying this label to the user doesn't make sense.
+            -->
+            <span class="label label-default" ng-hide="incompleteCount() == 0">
+                {{incompleteCount()}}
+            </span>
          </h1>
     </div>
 
@@ -50,7 +100,6 @@
             <thead>
                 <tr>
                     <th>Description</th>
-                    <th>Status</th>
                     <th>Done</th>
                 </tr>
             </thead>
@@ -59,44 +108,13 @@
                 <tr ng-repeat="item in todo.items">
                     <td>{{item.action}}</td>
                     <td>
-                        <!--
-                            This status(checked/unchecked) of this check-box
-                            represents the status of each item in TODO list.
-
-                            This has been introduced for TWO-WAY MODEL BINDING
-                            concept where the model is used to generate elements
-                            AND changes in the element cause corresponding changes
-                            in the model.This is unlike ONE-WAY BINDING where
-                            values are taken from the model and used to populate
-                            the elements in a template.
-
-                            The important addition here is "ng-model" attribute
-                            which tells AngularJS to create a two-way binding
-                            between the value of the input element and the "done"
-                            property of the corresponding data object (
-                            the one that the ng-repeat directive assigned to
-                            "item" when generating the elements )
-
-                            When the HTML is first compiled, AngularJS will
-                            use the value of the done property to set the value
-                            of the input element, and since we are using a
-                            check-box, a value of true causes the box to be
-                            checked, while a value of false causes the box to
-                            be unchecked.
-
-                            This two-way binding can be seen in effect by looking
-                            at the value of Done column in the table.
-
-                            AngularJS bindings are dynamic and a two-way binding
-                            such as the one applied here to the <input> element,
-                            updates the model which in turn, updates other
-                            elements that have related data-bindings.In present
-                            case, the <input> element and the text in the Done
-                            column are kept seamlessly in sync.
-                         -->
                         <input type="checkbox" ng-model="item.done" />
                     </td>
-                    <td>{{item.done}}</td>
+                    <!--
+                          From here we have removed the column displaying
+                          true/false values which is no more needed.It was added
+                          to demonstrate the two-way binding concept.
+                    -->
                 </tr>
             </tbody>
         </table>
