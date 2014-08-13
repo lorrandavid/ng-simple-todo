@@ -8,63 +8,60 @@
     <script src="../scripts/angular.js"></script>
 
     <script>
+       // Here the items array has been removed which stored the data in a locally
+       // declared array.Instead the data will now be loaded from the todo.json file
+       // located on server.
        var model = {
-        user: "Jignesh",
-        items:[
-          {
-            action: "Buy Flowers", done: false
-          },
-          {
-              action: "Get Shoes", done: false
-          },
-          {
-              action: "Collect Tickets", done: false
-          }
-        ]
+        user: "Jignesh"
        };
 
        var todoApp = angular.module("todoApp", []);
 
        /*
-          Below is a custom filter.
+            This is a new addition here.
+            The "run" method is defined by the AngularJS module object.
+            It takes a function that is executed once AngularJS has performed
+            its initial setup and is used for one-off tasks.
 
-          A custom filter is a filter "factory" which can be created by using
-          "filter" method defined by AngularJS module object.The "filter" method
-          returns a function that is used to filter a set of data objects.
+            Also note that we specified the $http argument for the function we
+            passed to the "run" method which tells AngularJS we want to use
+            the service object that provides support for making AJAX calls.
+            Using arguments to tell AngularJS what features you require is part
+            of an approach known as DEPENDENCY INJECTION.
 
-          In present case the the function which does actual filtering and
-          returned by "checkedItems" custom filter has two arguments:
-           1. items
-           2. showComplete
+            The $http service provides access to low-level AJAX requests.
+            Low level in this case really isn't that low at all until compared
+            with the $resources service that is used to interact with RESTful
+            web services.
 
-          The "items" argument will be provided by AngularJS and will be the set
-          of objects that should be filtered.
+            We use $http.get method to make an HTTP GET request to the server
+            for the todo.json file.
 
-          The "showComplete" argument will be passed when this filter will be
-          used.
+            You won’t notice any difference if you navigate to the todo.html
+            file with the browser, but the data is being obtained from the
+            server using a second HTTP request which can be confirmed via
+            Developer Tools in Chrome/IE or Firebug in Firefox.
        */
+       todoApp.run(function($http){
+         /*
+            The result from the "get" method is a "promise" which is an object
+            used to represent work that will complete in the future.Calling
+            the "success" method on the "promise" object lets us specify a
+            function that will be invoked when the AJAX request to the server
+            has completed and that the JSON data retrieved from the server will
+            be parsed to create a Javascript object and passed to the "success"
+            function as the "data" argument.In present case the data we receive
+            we use it to update the model.
+         */
+         $http.get("todo.json").success(function(data) {
+            model.items = data;
+         });
+       });
+
        todoApp.filter("checkedItems", function() {
           return function(items, showComplete) {
               var resultArr = [];
               angular.forEach(items, function(item) {
-                /*
-                 * One might wonder at first glance why item.done == false
-                 * check is present when this filter is meant to determine
-                 * whether tasks that have been marked as done (item.done == true)
-                 * will be included in the filtered data or not.
-                 * There is a reason however for the
-                 *   item.done == false
-                 * check and it is that when initially the list will be rendered
-                 * this filter gets applied but is passed showComplete as false
-                 * which will result in displaying no items, if the
-                 * item.done == false check is absent.
-                 *
-                 * On the other hand after the list rendering is done and
-                 * user checks the "Show Complete" checkbox it will list all
-                 * the items (marked/unmarked) which then makes using this
-                 * filter useless.
-                 *
-                 */
                 if (item.done == false || showComplete == true) {
                   resultArr.push(item);
                 }
@@ -127,26 +124,6 @@
             </thead>
 
             <tbody>
-                <!--
-                    New addition here is that filter
-                        filter: { done: false }
-                    is replaced with a custom filter:
-                        checkedItems: showComplete
-
-                    The syntax for using custom filters is the same as for
-                    the built-in filtering support which is
-                     <FILTER_NAME>
-                       followed by : (COLON)
-                       followed by the name of the model property or the decisive criteria property name
-                       which is to be passed to the filter function.
-
-                    The filter applied by filter: { done: false } works, but the
-                    result is pretty useless because checked tasks are forever
-                    hidden from the user.Thus we have created a custom filter
-                    named "checkedItems" which basically determines whether tasks
-                    that have been marked as done will be included in the
-                    filtered data or not.
-                 -->
                 <tr ng-repeat="item in todo.items | checkedItems: showComplete | orderBy: 'action' ">
                     <td>{{item.action}}</td>
                     <td>
@@ -156,24 +133,8 @@
             </tbody>
         </table>
 
-        <!--
-            This check-box is a new addition here.
-        -->
         <div class="checkbox-inline">
             <label>
-                <!--
-                  Here we have specified the name of a property, for the
-                  ng-model directive to update, that is not part of the model.
-
-                  The ng-model directive will dynamically create the property
-                  for us within the scope of the controller, effectively
-                  creating dynamic model properties that are used to handle
-                  user input.
-
-                  This is the same aspect which was demonstrated when the behavior
-                  "addNewItem" was introduced to which a dynamic created
-                  property "actionText" was passed as argument.
-                 -->
                 <input type="checkbox" ng-model="showComplete">
                 Show Complete
             </label>
