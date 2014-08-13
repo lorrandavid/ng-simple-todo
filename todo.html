@@ -25,6 +25,55 @@
 
        var todoApp = angular.module("todoApp", []);
 
+       /*
+          Below is a custom filter.
+
+          A custom filter is a filter "factory" which can be created by using
+          "filter" method defined by AngularJS module object.The "filter" method
+          returns a function that is used to filter a set of data objects.
+
+          In present case the the function which does actual filtering and
+          returned by "checkedItems" custom filter has two arguments:
+           1. items
+           2. showComplete
+
+          The "items" argument will be provided by AngularJS and will be the set
+          of objects that should be filtered.
+
+          The "showComplete" argument will be passed when this filter will be
+          used.
+       */
+       todoApp.filter("checkedItems", function() {
+          return function(items, showComplete) {
+              var resultArr = [];
+              angular.forEach(items, function(item) {
+                /*
+                 * One might wonder at first glance why item.done == false
+                 * check is present when this filter is meant to determine
+                 * whether tasks that have been marked as done (item.done == true)
+                 * will be included in the filtered data or not.
+                 * There is a reason however for the
+                 *   item.done == false
+                 * check and it is that when initially the list will be rendered
+                 * this filter gets applied but is passed showComplete as false
+                 * which will result in displaying no items, if the
+                 * item.done == false check is absent.
+                 *
+                 * On the other hand after the list rendering is done and
+                 * user checks the "Show Complete" checkbox it will list all
+                 * the items (marked/unmarked) which then makes using this
+                 * filter useless.
+                 *
+                 */
+                if (item.done == false || showComplete == true) {
+                  resultArr.push(item);
+                }
+              });
+              return resultArr;
+          };
+       });
+
+
        todoApp.controller("ToDoController", function($scope) {
           $scope.todo = model;
 
@@ -44,6 +93,7 @@
             $scope.todo.items.push({ action: actionText, done: false });
           }
        });
+
     </script>
 </head>
 <body ng-controller="ToDoController">
@@ -78,51 +128,26 @@
 
             <tbody>
                 <!--
-                     New addition here is the:
-                        | filter: { done: false } | orderBy: 'action'
+                    New addition here is that filter
+                        filter: { done: false }
+                    is replaced with a custom filter:
+                        checkedItems: showComplete
 
-                     which is applying filters.
+                    The syntax for using custom filters is the same as for
+                    the built-in filtering support which is
+                     <FILTER_NAME>
+                       followed by : (COLON)
+                       followed by the name of the model property or the decisive criteria property name
+                       which is to be passed to the filter function.
 
-                     Filtering can be applied to any part of the data model.
-
-                     Here we have used filters to control the data that is used
-                     by ng-repeat directive that populates the <table> element
-                     with details of the TODO list items.We have used two
-                     filters:
-
-                        1. the "filter" filter (odd name)
-                            - this one when applied selects objects based on
-                              the criteria it is configured with.In present case,
-                              it has the effect that any complete TODO item won't
-                              be shown to the user.
-
-                        2. the "orderBy" filter
-                            - this one sorts the data items.In present case,
-                              we have used it to sort by value of the "action"
-                              property.ALSO NOTICE HERE that when using this filter
-                              we specify the property we want to use for sorting
-                              as a string literal value, between single quote
-                              characters i.e. 'action'.BY DEFAULT, AngularJS
-                              assumes that everything is a property defined by the
-                              scope and without the quote characters would look for
-                              a scope property called action.
-
-                      Note:
-                        The functionality provided by filters can be achieved with
-                        behaviors and there is nothing wrong with using behaviors,
-                        however filters tend to be more general-purpose and lend
-                        themselves to reuse across an application.
-
-                      Once these filters are in place, when a new item will be
-                      added it will be inserted into the list based on alphabetical
-                      order of item's 'action' property value and when you check
-                      the box the item will be hidden.Note here that the data in
-                      the model isn't sorted; the sort operation is performed
-                      when the ng-repeat directive is processed to create the
-                      rows in the table.
-
+                    The filter applied by filter: { done: false } works, but the
+                    result is pretty useless because checked tasks are forever
+                    hidden from the user.Thus we have created a custom filter
+                    named "checkedItems" which basically determines whether tasks
+                    that have been marked as done will be included in the
+                    filtered data or not.
                  -->
-                <tr ng-repeat="item in todo.items | filter: { done: false } | orderBy: 'action' ">
+                <tr ng-repeat="item in todo.items | checkedItems: showComplete | orderBy: 'action' ">
                     <td>{{item.action}}</td>
                     <td>
                         <input type="checkbox" ng-model="item.done" />
@@ -130,6 +155,30 @@
                 </tr>
             </tbody>
         </table>
+
+        <!--
+            This check-box is a new addition here.
+        -->
+        <div class="checkbox-inline">
+            <label>
+                <!--
+                  Here we have specified the name of a property, for the
+                  ng-model directive to update, that is not part of the model.
+
+                  The ng-model directive will dynamically create the property
+                  for us within the scope of the controller, effectively
+                  creating dynamic model properties that are used to handle
+                  user input.
+
+                  This is the same aspect which was demonstrated when the behavior
+                  "addNewItem" was introduced to which a dynamic created
+                  property "actionText" was passed as argument.
+                 -->
+                <input type="checkbox" ng-model="showComplete">
+                Show Complete
+            </label>
+        </div>
+
     </div>
 </body>
 </html>
