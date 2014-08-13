@@ -1,31 +1,4 @@
 <!DOCTYPE html>
-<!--
-    AngularJS apps are formed from one or more modules. Modules are
-    created by calling the angular.module method, as follows:
-
-        var todoApp = angular.module("todoApp", []);
-
-    The arguments to the angular.module method are:
-
-        1. the name of the module to create and
-        2. an array of other modules that are going to be needed.Please note the
-           dependencies argument must be supplied, avoiding which causes an error.
-           If there are no dependencies then provide an empty array.
-
-    Tell AngularJS to apply the module through the ng-app attribute(in AngularJS
-    terms it is referred as a DIRECTIVE)
-
-    The most important AngularJS addition to HTML is the ng-app attribute,
-    which specifies that the html element in the listing contains a module that
-    should be processed by AngularJS.
-
-    When AngularJS is the only JavaScript framework being used, the convention
-    is to apply the ng-app attribute to the html element, as shown below.
-    If you are mixing AngularJS with other technologies such as jQuery, you
-    can narrow the boundaries of the AngularJS app by applying the ng-app
-    attribute to an element within the document.
-
--->
 <html ng-app="todoApp">
 <head>
     <title>TODO List</title>
@@ -35,12 +8,159 @@
     <script src="../scripts/angular.js"></script>
 
     <script>
+       /*
+            AngularJS supports the Model-View-Controller (MVC) pattern which
+            requires you to break up the application into three distinct areas:
+
+              1. data in the application (the model)
+              2. the logic that operates on the data (the controller)
+              3. the logic that displays the data (the view)
+
+            Separating the data from the way that it is presented to the user
+            is one of the key ideas in the MVC pattern.
+
+            Earlier the data was distributed across the HTML elements.The user's
+            name was contained in <header> and the details of the to-do
+            items were contained within <td> elements in the <table>.
+            Thus we have here pull all of the data together and separate it
+            from the HTML elements.This is the simplest way we have followed.
+            However the model can also contain the logic required to create,
+            load, store, and modify data objects. In an AngularJS app, this
+            logic is often at the server and is accessed by a web server.
+
+            For now we have just defined a Javascript object named "model"
+            with properties that correspond to the data that was previously
+            distributed among the HTML elements.
+
+            The "user" property defines the name of the user, and the "items"
+            property defines an array of objects that describes user's to-do
+            items.
+
+       */
+       var model = {
+        user: "Jignesh",
+        items:[
+          {
+            action: "Buy Flowers", done: false
+          },
+          {
+              action: "Get Shoes", done: false
+          },
+          {
+              action: "Collect Tickets", done: false
+          }
+        ]
+       };
+
+
        var todoApp = angular.module("todoApp", []);
+
+       /*
+            Here we are defining a controller.
+
+            The controller defines the business logic required to support a view,
+            although the term business logic isn't helpful.The best way of
+            describing a controller is to explain what kinds of logic it
+            doesn't contain - what's left goes into the controller.
+
+            Logic that deals with storing or retreiving data is part of the
+            "model".
+
+            Logic that deals with formatting the data to display to the user is
+            part of the "view".
+
+            The controller sits between the model and the view and connects them.
+
+            The controller responds to user interaction, updating the data in
+            model and providing the view with the data that it requires.
+
+            In AngularJS controllers are created by calling the "controller"
+            method on the "Module" object returned by calling "angular.module".
+
+            The arguments to the "controller" method are the name for the new
+            controller and a function that will be invoked to define the
+            controller functionality.
+
+            Here we have created the simplest controller possible.As mentioned
+            above one of the the main purposes of the controller is to provide
+            views with the data they require. You won't always want views
+            to have access to the complete model, so you use the controller to
+            explicitly select those portions of the data that are going to be
+            available, known as the "scope".
+
+            The argument to the controller function is called $scope i.e.
+            to say, the $ sign followed by the word "scope".
+
+            Convention:
+                In an AngularJS app, variable names that start with $ represent
+                built-in features that AngularJS provides.
+
+            When you see the $ sign, it usually refers to a built-in "service"
+            which is a self-contained component that provides features to multiple
+            controllers, but $scope is special and is used to expose data and
+            functionality to views.
+
+            In present case we want to work with the entire model in views
+            so we have defined a property called "todo" on the $scope
+            service object and assigned the complete model object defined above.
+
+            We also have to specify the region of the HTML document that the
+            controller will be responsible for which is done using
+            the "ng-controller" attribute.
+
+            In present case we have applied the ng-controller attribute to the
+            <body> element, since we have only one controller and this is such
+            a simple app.
+
+            The value of "ng-controller" attribute is set to the name of the
+            controller
+       */
+
+       todoApp.controller("ToDoController", function($scope) {
+          $scope.todo = model;
+       });
     </script>
 </head>
-<body>
+<body ng-controller="ToDoController">
     <div class="page-header">
-        <h1>Jignesh's To Do List</h1>
+        <!--
+            View (View part of MVC)
+
+            Views are generated by combining data the controller provides
+            with annotated HTML elements that produce content for the
+            browser to display.
+
+            Below we have used one kind of annotation, known as "data-binding",
+            to  populate the HTML document with the model data.
+
+            A few notes related to inserting model values:
+                AngularJS uses double-brace characters {{ <expression_here> }}
+                to denote a data-binding expresssion.The content of the expression
+                is evaluated as Javascript, limited to the data and functions
+                assigned to the scope by the controller.In other words I can
+                only access the parts of the model that we assigned to the $scope
+                object when we defined the controller using the names of the
+                properties that I created on the $scope object.
+
+                For example, below we are accessing the "todo.user" property,
+                because I assigned the "todo" object to the "$scope.todo"
+                property.
+
+            The contents of a data-binding expression can be any valid Javascript
+            statement, meaning that you can perform operations to create new
+            data from the model.For e.g. below we have used this feature to
+            display the number of to-do items in the list.
+
+            Caution:
+                You should use expressions only to perform simple operations
+                to prepare data values for display.Don’t use data
+                bindings to perform complex logic or to manipulate the model;
+                that’s the job of the controller
+        -->
+        <h1>
+            {{todo.user}}'s To Do List
+            <span class="label label-default">{{todo.items.length}}</span>
+         </h1>
     </div>
 
     <div class="panel">
@@ -60,20 +180,60 @@
             </thead>
 
             <tbody>
-                <tr>
-                    <td>Buy Flowers</td>
-                    <td>No</td>
-                </tr>
-                <tr>
-                    <td>Get Shoes</td>
-                    <td>No</td>
-                </tr>
-                <tr>
-                    <td>Collect Tickets</td>
-                    <td>No</td>
+                <!--
+                    View (View part of MVC).For basic details on View
+                    please refer description given above.
+
+                    Expressions are also used with DIRECTIVES, which tell
+                    AngularJS how you want content to be processed.
+
+                    For e.g. below we used the ng-repeat attribute, which applies
+                    a directive that tells AngularJS to generate the element
+                    it is applied to and its contents for each object in a
+                    collection.
+
+                    The value of "ng-repeat" attribute is in the format
+                        <name> in <collection>
+
+                    We have specified "item in todo.items", which means the
+                    following:
+                        Generate the <tr> element and the <td> elements it
+                        contains for each of the objects in the "todo.items"
+                        array and assign each object in the array to a
+                        variable called "item".
+
+                        Using the "item" variable, we are able to define binding
+                        expressions for the properties of each object in the array.
+                -->
+                <tr ng-repeat="item in todo.items">
+                    <td>{{item.action}}</td>
+                    <td>{{item.done}}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 </body>
 </html>
+
+<!--
+    Summary:
+      Once the the Model, View and Controller parts are plumbed together,
+      AngularJS compiles the HTML in the document, discovers the "ng-controller"
+      attribute and invokes the ToDoController function to set the scope that
+      will be used to create the view.As each data-binding expression is
+      encountered, AngularJS looks up the specified value on the $scope
+      object and inserts the value into the HTML document.
+
+      For e.g. this expression
+
+         {{todo.user}}'s To Do List
+
+      is processed and transformed into following string:
+
+         Jignesh's To Do List
+
+      This is known as data binding or model binding, where a value from the
+      model is bound to the contents of an HTML element.There are a few
+      different ways of creating data binding which shall come into picture
+      later.
+ -->
