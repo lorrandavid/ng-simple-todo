@@ -28,38 +28,24 @@
        todoApp.controller("ToDoController", function($scope) {
           $scope.todo = model;
 
-          /*
-            Controllers define "behaviors" on the scope.
-
-            Behaviors are functions that operate on the data in the model
-            to implement the business logic in the application.
-
-            The behaviors defined by a controller support a view to display
-            data to the user and to update the model based on user interactions.
-
-            Behaviors are defined by adding functions to the $scope object
-            that is passed to the controller function.
-
-            For e.g. the behavior defined below updates the TODO list items
-            count in the header, by excluding the completed items count.
-
-            The name of the property used to attach the function to the $scope
-            object is used as the behavior name.Our behavior is called
-            "incompleteCount", and we can invoke it within the scope of the
-            "ng-controller" attribute, which applies the controller to the
-            HTML elements that form the view.
-          */
-
           $scope.incompleteCount = function() {
             var count = 0;
-            // Here we used angular.forEach method to enumerate the contents
-            // of the data array.AngularJS includes some useful utility methods
-            // that supplement the Javascript language.
             angular.forEach($scope.todo.items, function(item) {
               if (!item.done) { count++ };
             });
             return count;
-          };
+          }
+
+          /*
+            Below we have defined a behavior warningLevel, which depends on
+            another behavior incompleteCount.
+
+            This one selects a CSS class based on the number of incomplete
+            items in the TODO list.
+          */
+          $scope.warningLevel = function() {
+            return $scope.incompleteCount() < 3 ? "label-success" : "label-warning"
+          }
        });
     </script>
 </head>
@@ -68,21 +54,20 @@
         <h1>
             {{todo.user}}'s To Do List
             <!--
-                Notice here that we call the behavior using parentheses.
-                You can pass objects are arguments to behaviors, which
-                makes it possible to create general-purpose behaviors
-                that can be used with different data objects.This present
-                application is sufficiently simple that it is not required
-                to pass any arguments and instead get the data we require
-                directly from the $scope object in the controller.
+                The new behavior warningLevel is applied using the ng-class
+                directive.
 
-                Also we have used "ng-hide" directive which will hide the element
-                it is applied to - and its content elements - if the expression
-                that is assigned as the attribute value evaluates to true
-                (boolean).For e.g. if all the items in the TODO list are complete
-                then displaying this label to the user doesn't make sense.
-            -->
-            <span class="label label-default" ng-hide="incompleteCount() == 0">
+                The ng-class directive applies the CSS class returned by the
+                behavior which has the effect of changing the color of the
+                label in the HTML document.
+
+                Also note that this <span> element has two directives, each
+                of which relies on a different behavior.Thus we can combine
+                behaviors and directives freely to get the effect we require
+                in an application.
+             -->
+            <span class="label label-default" ng-hide="incompleteCount() == 0"
+                                              ng-class="warningLevel()">
                 {{incompleteCount()}}
             </span>
          </h1>
@@ -110,11 +95,6 @@
                     <td>
                         <input type="checkbox" ng-model="item.done" />
                     </td>
-                    <!--
-                          From here we have removed the column displaying
-                          true/false values which is no more needed.It was added
-                          to demonstrate the two-way binding concept.
-                    -->
                 </tr>
             </tbody>
         </table>
