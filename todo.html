@@ -40,40 +40,7 @@
             return $scope.incompleteCount() < 3 ? "label-success" : "label-warning"
           }
 
-          /*
-             This behavior allows the user to create new TODO items.This
-             is an example of how behaviors and directives can be combined
-             to respond to user interaction.
-
-             This behavior takes the text of a new TODO item and adds an object
-             to the data model, using the text as the value for "action" property
-             and setting the "done" property to false.
-
-             This is the first behavior which demonstrates modifying the model.
-             But please note that in more complex applications there is usually
-             a much more split between behaviors that obtain and prepare data
-             for the view and those that respond to user interaction and update
-             the model.
-
-             When this gets invoked it updates the
-
-               -> Data Table (created using ng-repeat directive) by appending
-                  the newly added item in the end
-               -> Incomplete Count in the Header by incrementing the current incomplete
-                  count by 1
-
-           THIS AGAIN DEMONSTRATES THAT ANGULARJS BINDINGS ARE DYNAMIC AND
-           THE TWO-WAY MODEL BINDING UPDATES THE MODEL WHICH IN TURN UPDATES
-           OTHER ELEMENTS THAT HAVE RELATED DATA BINDINGS.
-
-           AND THIS LIVE MODEL IN ANGULARJS APP PROVIDES THE BENEFIT THAT
-           YOUR BINDINGS AND BEHAVIORS CREATE A FOUNDATION OF FEATURES THAT
-           WORK TOGETHER.
-
-          */
           $scope.addNewItem = function(actionText) {
-            // push behavior is in-built for Javascript's Array objects and
-            // todo.items is an array.
             $scope.todo.items.push({ action: actionText, done: false });
           }
        });
@@ -92,32 +59,8 @@
 
     <div class="panel">
         <div class="input-group">
-            <!--
-                New addition here is the ng-model directive.
-
-                It is the same directive which was used earlier while setting-up
-                check-boxes to demonstrate two-way model binding.
-
-                Here the important point to note is that we have specified
-                the name of a property, for the directive to update, that is
-                not part of the model.
-
-                The ng-model directive will dynamically create the property
-                for us within the scope of the controller, effectively
-                creating dynamic model properties that are used to handle
-                user input.
-            -->
             <input class="form-control" ng-model="actionText"/>
             <span class="input-group-btn">
-                <!--
-                   New addition here is the ng-click directive.
-
-                   This directive sets up a handler that evaluates the expression
-                   when the "click" event is triggered.In present case the
-                   expression invokes the addNewItem behavior, which is passed
-                   the dynamic "actionText" property (created above using ng-model
-                   directive) as the argument.
-                 -->
                 <button class="btn btn-default"
                         ng-click="addNewItem(actionText)">
                     Add
@@ -134,7 +77,52 @@
             </thead>
 
             <tbody>
-                <tr ng-repeat="item in todo.items">
+                <!--
+                     New addition here is the:
+                        | filter: { done: false } | orderBy: 'action'
+
+                     which is applying filters.
+
+                     Filtering can be applied to any part of the data model.
+
+                     Here we have used filters to control the data that is used
+                     by ng-repeat directive that populates the <table> element
+                     with details of the TODO list items.We have used two
+                     filters:
+
+                        1. the "filter" filter (odd name)
+                            - this one when applied selects objects based on
+                              the criteria it is configured with.In present case,
+                              it has the effect that any complete TODO item won't
+                              be shown to the user.
+
+                        2. the "orderBy" filter
+                            - this one sorts the data items.In present case,
+                              we have used it to sort by value of the "action"
+                              property.ALSO NOTICE HERE that when using this filter
+                              we specify the property we want to use for sorting
+                              as a string literal value, between single quote
+                              characters i.e. 'action'.BY DEFAULT, AngularJS
+                              assumes that everything is a property defined by the
+                              scope and without the quote characters would look for
+                              a scope property called action.
+
+                      Note:
+                        The functionality provided by filters can be achieved with
+                        behaviors and there is nothing wrong with using behaviors,
+                        however filters tend to be more general-purpose and lend
+                        themselves to reuse across an application.
+
+                      Once these filters are in place, when a new item will be
+                      added it will be inserted into the list based on alphabetical
+                      order of item's 'action' property value and when you check
+                      the box the item will be hidden.Note here that the data in
+                      the model isn't sorted; the sort operation is performed
+                      when the ng-repeat directive is processed to create the
+                      rows in the table.
+
+                 -->
+                <tr ng-repeat="item in todo.items | filter: { done: false } | orderBy: 'action' ">
                     <td>{{item.action}}</td>
                     <td>
                         <input type="checkbox" ng-model="item.done" />
