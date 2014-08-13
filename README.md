@@ -1,8 +1,21 @@
 ng-simple-todo
 ==============
 
-A Simple TODO list management application built using AngularJS.The whole purpose behind this application is to introduce AngularJS to developers who are new to it.It demonstrates some basic but important features of AngularJS which would help novices to start getting hands-on using AngularJS in real-world applications or at-least should be able to read and understand already existing AngularJS applications.
+A Simple TODO list management application built using AngularJS.The whole purpose behind this application is to introduce AngularJS to developers who are new to it.It demonstrates some basic but important features of AngularJS which would help novices to start getting hands-on using AngularJS in real-world applications or at-least should be able to read and understand already existing AngularJS applications. A brief listing of AngularJS features(in order) this application introduces:
 
+1. Including AngularJS library in HTML file
+2. Marking an HTML element as an AngularJS app using `ng-app` attribute (in AngularJS it is termed as `directive`)
+3. Analysing the data and behaviors and categorizing those to be part of Model, View and Controller aspects of MVC Pattern supported by AngularJS.As a part of doing this introduced:
+  - how to define a model data
+  - how to define a Controller in AngularJS, 
+  - the $scope service object used in a controller and how model data can be binded to $scope object
+  - how to mark a container in HTML to be processed by a controller.This marking is facilitated by AngularJS's `ng-controller` directive,
+  - double-curly braces `{{}}` syntax for evaluating AngularJS expressions
+  - `ng-repeat` directive that tells AngularJS to generate the element it is applied to and its contents for each object in a collection.
+4. The powerful Two-way Model Binding supported by AngularJS which demonstrates how the model is used to generate elements AND changes in the element cause corresponding changes in the model.As part of this `ng-model` is introduced which helps in achieving this two-way model or data binding.
+5. Adding behaviors to the controller.Demonstrated the working of behavior, in context of the application, by dynamically updating the TODO list items count in the header when user marks one ore more items as complete.As part of this `ng-hide` directive is introduced which hides the element it is applied to - and its content elements - if the expression that is assigned as the attribute value evaluates to true (boolean).
+6. Adding behavior in the controller which depends on another behavior already present.Demonstrated the working of  behavior, in context of the application, by applying `label-warning` and `label-success` CSS classes (of [Twitter Bootstrap](http://getbootstrap.com/)) dynamically by examining the incomplete TODO items count.As part of this introduced the AngularJS's `ng-class` directive which applies the CSS class returned by the behavior.Also demonstrated that an HTML element can use multiple AngularJS directives, each of which relies on a different behavior to get the effect we require in an application.
+7.
 
 
 Folders
