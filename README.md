@@ -29,7 +29,9 @@ A Brief Listing Of AngularJS features Introduced, in order, By This Application:
   
 4. The powerful Two-way Model Binding supported by AngularJS which demonstrates how the model is used to generate elements AND changes in the element cause corresponding changes in the model.As part of this `ng-model` is introduced which helps in achieving this two-way model or data binding.
 
-5. Adding behaviors to the controller.Demonstrated the working of behavior, in context of the application, by dynamically updating the TODO list items count in the header when user marks one ore more items as complete.As part of this `ng-hide` directive is introduced which hides the element it is applied to - and its content elements - if the expression that is assigned as the attribute value evaluates to true (boolean).
+5. Adding behaviors to the controller.
+   
+   Demonstrated the working of behavior, in context of the application, by dynamically updating the TODO list items count in the header when user marks one ore more items as complete.As part of this `ng-hide` directive is introduced which hides the element it is applied to - and its content elements - if the expression that is assigned as the attribute value evaluates to true (boolean).
 
 6. Adding behavior in the controller which depends on another behavior already present.
 
