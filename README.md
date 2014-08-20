@@ -9,7 +9,7 @@ It demonstrates some basic but important features of AngularJS which would help 
 
 The application is built in an incremental manner starting with a static HTML mockup of TODO List.Then step-by-step AngularJS features are introduced to it to make it dynamic and usable.
 
-The incremental changes made while implementing this application can be referred from the HTML comments added in `todo.html` source code in each commit.The starting point of reference is the  [commit](975d00585cda5981601f54bce9aa6a5c507b4800) and ending point of reference is the [commit](ae08f183163f0bf04bbcaa9d4e94cbca59dc2382).
+The incremental changes made while implementing this application can be referred from the HTML comments added in `todo.html` source code in each commit.The starting point of reference is the  [commit](https://github.com/jignesh-gohel/ng-simple-todo/commit/932f7b0efe41ad198fe8ac2c2e55c3ea77ca002e) and ending point of reference is the [commit](https://github.com/jignesh-gohel/ng-simple-todo/commit/ae08f183163f0bf04bbcaa9d4e94cbca59dc2382).
 
 
 A Brief Listing Of AngularJS features Introduced, in order, By This Application:
